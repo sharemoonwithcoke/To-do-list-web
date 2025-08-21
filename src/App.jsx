@@ -15,7 +15,11 @@ function App() {
     if (userData.token) {
       localStorage.setItem('token', userData.token);
     }
-    setUser(userData.user);
+    // 将token包含在user对象中
+    setUser({
+      ...userData.user,
+      token: userData.token
+    });
   };
 
   const handleLogout = () => {
