@@ -4,7 +4,8 @@ import {
   deleteTask, 
   taskExists,
   submitTaskProof,
-  shareTask,
+  shareTaskView,
+  getSharedViews,
   getUserStats,
   getRankings
 } from '../models/taskModel.js';
@@ -66,24 +67,30 @@ export function submitTaskProofHandler(req, res) {
 
 export function shareTaskHandler(req, res) {
   try {
-    const { taskId } = req.params;
     const { toUsername } = req.body;
-    
-    if (!taskExists(req.username, taskId)) {
-      return res.status(404).json({ error: '任务不存在' });
-    }
     
     if (!toUsername) {
       return res.status(400).json({ error: '请指定分享给的用户' });
     }
     
-    const sharedTask = shareTask(req.username, toUsername, taskId);
+    const shareResult = shareTaskView(req.username, toUsername);
     res.json({ 
-      message: '任务分享成功',
-      sharedTask 
+      message: '任务视图分享成功',
+      viewId: shareResult.viewId,
+      sharedTasksCount: shareResult.sharedTasks.length,
+      sharedAt: shareResult.sharedAt
     });
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+}
+
+export function getSharedViewsHandler(req, res) {
+  try {
+    const sharedViews = getSharedViews(req.username);
+    res.json(sharedViews);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 }
 

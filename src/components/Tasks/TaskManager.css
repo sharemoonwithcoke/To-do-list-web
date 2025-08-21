@@ -79,6 +79,14 @@
   color: #333;
 }
 
+.share-description {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
 /* 任务过滤器 */
 .task-filters {
   display: flex;
@@ -348,6 +356,15 @@
 .submission-badge {
   background: #ffc107;
   color: #212529;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.shared-badge {
+  background: #17a2b8;
+  color: white;
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 12px;

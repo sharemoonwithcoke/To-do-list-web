@@ -7,7 +7,8 @@ import {
   getStatsHandler,
   getRankingsHandler,
   submitTaskProofHandler,
-  shareTaskHandler
+  shareTaskHandler,
+  getSharedViewsHandler
 } from '../controllers/taskController.js';
 import { authMiddleware } from '../middleware/auth.js';
 import { validateTask, validateTaskUpdate, validateSubmission } from '../middleware/validation.js';
@@ -49,10 +50,16 @@ router.post('/:taskId/submit', (req, res) => {
   submitTaskProofHandler(req, res);
 });
 
-// 分享任务
-router.post('/:taskId/share', (req, res) => {
+// 分享整个任务视图
+router.post('/share', (req, res) => {
   if (!authMiddleware(req, res)) return;
   shareTaskHandler(req, res);
+});
+
+// 获取分享的视图列表
+router.get('/shared-views', (req, res) => {
+  if (!authMiddleware(req, res)) return;
+  getSharedViewsHandler(req, res);
 });
 
 // 获取统计数据

@@ -3,6 +3,9 @@
 // 存储用户任务: { username: [{ id: string, title: string, description: string, frequency: string, completed: boolean, submissions: array }] }
 const tasks = {};
 
+// 存储任务视图分享: { fromUsername: { toUsername: { sharedAt: date, viewId: string } } }
+const sharedViews = {};
+
 // 生成唯一ID
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -111,33 +114,71 @@ export function submitTaskProof(username, taskId, submission) {
   return task;
 }
 
-// 分享任务给其他用户
-export function shareTask(fromUsername, toUsername, taskId) {
-  if (!fromUsername || !toUsername || !taskId) {
-    throw new Error('FromUsername, toUsername and taskId are required');
+// 分享整个任务视图给其他用户
+export function shareTaskView(fromUsername, toUsername) {
+  if (!fromUsername || !toUsername) {
+    throw new Error('FromUsername and toUsername are required');
   }
 
-  const originalTask = tasks[fromUsername]?.find(t => t.id === taskId);
-  if (!originalTask) {
-    throw new Error('Task not found');
+  // 检查源用户是否有任务
+  const sourceTasks = getTasks(fromUsername);
+  if (sourceTasks.length === 0) {
+    throw new Error('没有任务可以分享');
   }
 
-  // 创建共享任务的副本
-  const sharedTask = {
-    ...originalTask,
-    id: generateId(),
-    sharedFrom: fromUsername,
-    sharedAt: new Date().toISOString(),
-    submissions: [] // 重置提交历史
-  };
-
-  // 确保目标用户的任务数组存在
+  // 检查目标用户是否存在
   if (!tasks[toUsername]) {
     tasks[toUsername] = [];
   }
 
-  tasks[toUsername].push(sharedTask);
-  return sharedTask;
+  // 创建分享记录
+  if (!sharedViews[fromUsername]) {
+    sharedViews[fromUsername] = {};
+  }
+
+  const viewId = generateId();
+  sharedViews[fromUsername][toUsername] = {
+    sharedAt: new Date().toISOString(),
+    viewId: viewId
+  };
+
+  // 复制所有任务到目标用户（作为共享任务）
+  const sharedTasks = sourceTasks.map(task => ({
+    ...task,
+    id: generateId(), // 生成新的ID
+    sharedFrom: fromUsername,
+    sharedAt: new Date().toISOString(),
+    viewId: viewId,
+    submissions: [] // 重置提交历史
+  }));
+
+  // 将共享任务添加到目标用户
+  tasks[toUsername].push(...sharedTasks);
+
+  return {
+    viewId: viewId,
+    sharedTasks: sharedTasks,
+    sharedAt: new Date().toISOString()
+  };
+}
+
+// 获取共享的任务视图
+export function getSharedTaskView(username, viewId) {
+  if (!username || !viewId) return [];
+  
+  return tasks[username]?.filter(task => task.viewId === viewId) || [];
+}
+
+// 获取用户分享的视图列表
+export function getSharedViews(username) {
+  if (!username) return [];
+  
+  const userSharedViews = sharedViews[username] || {};
+  return Object.entries(userSharedViews).map(([toUsername, viewData]) => ({
+    toUsername,
+    viewId: viewData.viewId,
+    sharedAt: viewData.sharedAt
+  }));
 }
 
 // 获取指定日期的任务

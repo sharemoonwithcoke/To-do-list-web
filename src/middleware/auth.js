@@ -8,7 +8,8 @@ export function authMiddleware(req, res) {
     // 从Authorization header获取token
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: '未提供认证token' });
+      res.status(401).json({ error: '未提供认证token' });
+      return false;
     }
     
     const token = authHeader.substring(7); // 移除 'Bearer ' 前缀
@@ -24,11 +25,14 @@ export function authMiddleware(req, res) {
     return true;
   } catch (error) {
     if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({ error: '无效的token' });
+      res.status(401).json({ error: '无效的token' });
+      return false;
     } else if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({ error: 'token已过期' });
+      res.status(401).json({ error: 'token已过期' });
+      return false;
     } else {
-      return res.status(500).json({ error: '认证失败' });
+      res.status(500).json({ error: '认证失败' });
+      return false;
     }
   }
 }

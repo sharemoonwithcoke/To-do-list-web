@@ -11,10 +11,16 @@ function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
 
   const handleLogin = (userData) => {
-    setUser(userData);
+    // 存储token到localStorage
+    if (userData.token) {
+      localStorage.setItem('token', userData.token);
+    }
+    setUser(userData.user);
   };
 
   const handleLogout = () => {
+    // 清除token
+    localStorage.removeItem('token');
     setUser(null);
     setCurrentPage('dashboard'); 
   };

@@ -12,8 +12,7 @@ function TaskManager({ tasks, onAddTask, onTaskUpdate, onTaskDelete, onTaskSubmi
     requiresSubmission: false
   });
   const [shareData, setShareData] = useState({
-    username: '',
-    taskId: ''
+    username: ''
   });
 
   const handleAddTask = (e) => {
@@ -30,12 +29,30 @@ function TaskManager({ tasks, onAddTask, onTaskUpdate, onTaskDelete, onTaskSubmi
     setShowAddForm(false);
   };
 
-  const handleShareTask = (e) => {
+  const handleShareTaskView = async (e) => {
     e.preventDefault();
-    // 这里需要实现分享逻辑
-    console.log('分享任务:', shareData);
-    setShareData({ username: '', taskId: '' });
-    setShowShareForm(false);
+    try {
+      const response = await fetch('/tasks/share', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ toUsername: shareData.username })
+      });
+
+      const result = await response.json();
+      
+      if (response.ok) {
+        alert(`成功分享任务视图给 ${shareData.username}！共分享了 ${result.sharedTasksCount} 个任务。`);
+        setShareData({ username: '' });
+        setShowShareForm(false);
+      } else {
+        alert(`分享失败: ${result.error}`);
+      }
+    } catch (error) {
+      alert('分享失败: ' + error.message);
+    }
   };
 
   const filteredTasks = tasks.filter(task => {
@@ -65,7 +82,7 @@ function TaskManager({ tasks, onAddTask, onTaskUpdate, onTaskDelete, onTaskSubmi
             className="share-btn"
             onClick={() => setShowShareForm(!showShareForm)}
           >
-            📤 分享
+            📤 分享视图
           </button>
           <button 
             className="add-btn"
@@ -79,23 +96,11 @@ function TaskManager({ tasks, onAddTask, onTaskUpdate, onTaskDelete, onTaskSubmi
       {showShareForm && (
         <div className="share-form-overlay">
           <div className="share-form">
-            <h3>分享任务</h3>
-            <form onSubmit={handleShareTask}>
-              <div className="form-group">
-                <label>选择要分享的任务:</label>
-                <select
-                  value={shareData.taskId}
-                  onChange={(e) => setShareData({...shareData, taskId: e.target.value})}
-                  required
-                >
-                  <option value="">请选择任务</option>
-                  {tasks.map(task => (
-                    <option key={task.id} value={task.id}>
-                      {task.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <h3>分享任务视图</h3>
+            <p className="share-description">
+              将你的所有任务分享给其他用户，他们会收到你当前任务列表的副本。
+            </p>
+            <form onSubmit={handleShareTaskView}>
               <div className="form-group">
                 <label>分享给用户:</label>
                 <input
@@ -107,7 +112,7 @@ function TaskManager({ tasks, onAddTask, onTaskUpdate, onTaskDelete, onTaskSubmi
                 />
               </div>
               <div className="form-buttons">
-                <button type="submit">分享</button>
+                <button type="submit">分享视图</button>
                 <button type="button" onClick={() => setShowShareForm(false)}>取消</button>
               </div>
             </form>
@@ -270,6 +275,9 @@ function TaskCard({ task, onUpdate, onDelete, onSubmit, getFrequencyText }) {
               <span className="task-frequency">{getFrequencyText(task.frequency)}</span>
               {task.requiresSubmission && (
                 <span className="submission-badge">需提交</span>
+              )}
+              {task.sharedFrom && (
+                <span className="shared-badge">来自 {task.sharedFrom}</span>
               )}
             </div>
           </div>
