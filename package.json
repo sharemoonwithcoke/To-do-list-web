@@ -13,8 +13,10 @@
     "cookie-parser": "^1.4.7",
     "express": "^4.21.2",
     "final": "file:",
+    "node-fetch": "^3.3.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

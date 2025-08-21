@@ -3,45 +3,40 @@ import { useState } from 'react';
 import Header from './components/Header/Header';
 import LoginForm from './components/Login/LoginForm';
 import Dashboard from './pages/Dashboard';
-import Stats from './pages/Stats';
-import Rankings from './pages/Rankings';
+import CalendarView from './pages/CalendarView';
+import './App.css';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
-  const [currentPage, setCurrentPage] = useState('dashboard');
+  const [authId, setAuthId] = useState('');
+  const [currentView, setCurrentView] = useState('calendar'); // 'calendar' or 'tasks'
 
-  const handleLogin = (user) => {
+  const handleLogin = (user, id) => {
     setUsername(user);
+    setAuthId(id);
     setIsLoggedIn(true);
   };
 
   const handleLogout = () => {
     setUsername('');
+    setAuthId('');
     setIsLoggedIn(false);
-    setCurrentPage('dashboard'); 
+    setCurrentView('calendar');
   };
 
+  const handleViewChange = (view) => {
+    setCurrentView(view);
+  };
 
-
-  
-const handlePageChange = (page) => {
-  setCurrentPage(page);
- 
- 
-};
-
- 
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'dashboard':
-        return <Dashboard username={username} />;
-      case 'stats':
-        return <Stats />;
-      case 'rankings':
-        return <Rankings />;
+  const renderMainContent = () => {
+    switch (currentView) {
+      case 'calendar':
+        return <CalendarView username={username} authId={authId} />;
+      case 'tasks':
+        return <Dashboard username={username} authId={authId} />;
       default:
-        return <Dashboard username={username} />;
+        return <CalendarView username={username} authId={authId} />;
     }
   };
 
@@ -52,10 +47,10 @@ const handlePageChange = (page) => {
           <Header 
             username={username} 
             onLogout={handleLogout}
-            currentPage={currentPage}
-            onPageChange={handlePageChange} 
+            currentView={currentView}
+            onViewChange={handleViewChange} 
           />
-          {renderPage()}
+          {renderMainContent()}
         </>
       ) : (
         <LoginForm onLogin={handleLogin} />

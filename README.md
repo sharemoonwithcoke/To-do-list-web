@@ -1,8 +1,181 @@
-# React + Vite
+# To-Do List 应用
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+一个功能完整的任务管理应用，支持日历视图、任务分享和完成证明提交。
 
-Currently, two official plugins are available:
+## 功能特性
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 🔐 用户认证
+- 用户注册和登录
+- 支持用户名或邮箱登录
+- 密码加密存储
+- 身份验证ID管理
+
+### 📅 日历视图
+- 月历显示
+- 点击日期查看当日任务
+- 任务完成状态指示器
+- 支持月份切换
+
+### 📝 任务管理
+- 创建、编辑、删除任务
+- 任务优先级设置（高、中、低）
+- 任务频率设置（一次性、每天、每周、每月）
+- 任务描述和备注
+
+### ✅ 任务完成
+- 任务完成证明提交
+- 支持截图上传
+- 相关链接提交
+- 完成日志记录
+- 完成历史追踪
+
+### 🤝 任务分享
+- 将任务分享给其他用户
+- 查看分享给自己的任务
+- 共享任务完成历史
+
+### 📱 响应式设计
+- 手机友好的界面设计
+- 触摸优化的交互
+- 自适应布局
+
+## 技术栈
+
+### 前端
+- React 18
+- Vite
+- CSS3 (响应式设计)
+- 现代JavaScript (ES6+)
+
+### 后端
+- Node.js
+- Express.js
+- 内存数据存储 (可扩展为数据库)
+
+## 安装和运行
+
+### 1. 安装依赖
+```bash
+npm install
+```
+
+### 2. 启动开发服务器
+```bash
+# 启动前端开发服务器
+npm run dev
+
+# 启动后端服务器 (新终端)
+node server.js
+```
+
+### 3. 访问应用
+- 前端: http://localhost:5173
+- 后端: http://localhost:3000
+
+## 使用指南
+
+### 注册和登录
+1. 首次访问应用会显示登录页面
+2. 点击"没有账户？点击注册"进行注册
+3. 填写用户名、邮箱和密码
+4. 注册成功后自动登录
+
+### 创建任务
+1. 在日历视图中点击"添加任务"按钮
+2. 或点击具体日期，然后点击"添加任务"
+3. 填写任务信息：
+   - 任务标题（必填）
+   - 任务描述（可选）
+   - 优先级（低/中/高）
+   - 频率（一次性/每天/每周/每月）
+   - 是否需要提交证明
+   - 分享给其他用户（可选）
+
+### 完成任务
+1. 在日历视图中点击任务
+2. 如果任务需要提交证明，会弹出完成表单
+3. 至少提供一种完成证明：
+   - 上传截图（支持JPG、PNG、GIF，最大5MB）
+   - 提供相关链接
+   - 填写完成日志
+4. 点击"提交完成"
+
+### 查看任务历史
+1. 在日历视图中点击已完成的任务
+2. 查看任务的完成历史记录
+3. 包括完成者、完成时间、提交的证明等
+
+### 分享任务
+1. 创建任务时勾选"需要提交完成证明"
+2. 在"分享给"字段输入目标用户名
+3. 目标用户可以在其日历中看到分享的任务
+4. 双方都可以查看任务的完成历史
+
+## 项目结构
+
+```
+src/
+├── components/          # React组件
+│   ├── Calendar/       # 日历相关组件
+│   ├── Header/         # 页面头部
+│   ├── Login/          # 登录组件
+│   └── Tasks/          # 任务相关组件
+├── pages/              # 页面组件
+│   ├── CalendarView.jsx
+│   └── Dashboard.jsx
+├── controllers/        # 后端控制器
+├── models/            # 数据模型
+├── routes/            # API路由
+├── services/          # 业务逻辑
+├── middleware/        # 中间件
+└── utils/             # 工具函数
+```
+
+## API接口
+
+### 用户认证
+- `POST /sessions` - 用户登录
+- `POST /sessions/register` - 用户注册
+- `DELETE /sessions` - 用户登出
+
+### 任务管理
+- `GET /tasks` - 获取用户任务
+- `POST /tasks` - 创建任务
+- `PUT /tasks/:id` - 更新任务
+- `DELETE /tasks/:id` - 删除任务
+- `POST /tasks/:id/complete` - 完成任务
+- `GET /tasks/shared` - 获取分享的任务
+
+### 统计信息
+- `GET /tasks/stats` - 获取用户统计
+- `GET /tasks/rankings` - 获取排行榜
+
+## 开发说明
+
+### 数据存储
+当前使用内存存储，重启服务器后数据会丢失。在生产环境中建议：
+- 使用数据库（如MongoDB、PostgreSQL）
+- 实现数据持久化
+- 添加数据备份机制
+
+### 文件上传
+当前支持截图上传，建议在生产环境中：
+- 使用云存储服务（如AWS S3、阿里云OSS）
+- 实现文件压缩和优化
+- 添加文件类型和大小验证
+
+### 安全性
+建议在生产环境中：
+- 使用HTTPS
+- 实现JWT认证
+- 添加请求频率限制
+- 实现密码强度验证
+- 添加SQL注入防护
+
+## 许可证
+
+MIT License
+
+## 贡献
+
+欢迎提交Issue和Pull Request来改进这个项目！

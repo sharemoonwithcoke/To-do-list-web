@@ -2,33 +2,35 @@
 import React from 'react';
 import './Header.css';
 
-function Header({ username, onLogout, currentPage, onPageChange }) {
+function Header({ username, onLogout, currentView, onViewChange }) {
   return (
     <header className="header">
-      <h1 className="header__title">Task Manager</h1>
-      <nav className="header__nav">
-        <button 
-          onClick={() => onPageChange('dashboard')}
-          className={`header__link ${currentPage === 'dashboard' ? 'active' : ''}`}
-        >
-          To-Do List
-        </button>
-        <button 
-          onClick={() => onPageChange('stats')}
-          className={`header__link ${currentPage === 'stats' ? 'active' : ''}`}
-        >
-          Personal Stats
-        </button>
-        <button 
-          onClick={() => onPageChange('rankings')}
-          className={`header__link ${currentPage === 'rankings' ? 'active' : ''}`}
-        >
-          Rankings
-        </button>
-      </nav>
-      <div className="header__user">
-        <p className="header__username">User: {username}</p>
-        <button className="header__logout" onClick={onLogout}>Logout</button>
+      <div className="header__content">
+        <h1 className="header__title">To-Do List</h1>
+        
+        <div className="header__nav">
+          <button 
+            onClick={() => onViewChange('calendar')}
+            className={`header__nav-btn ${currentView === 'calendar' ? 'active' : ''}`}
+          >
+            <span className="nav-icon">📅</span>
+            <span className="nav-text">日历</span>
+          </button>
+          <button 
+            onClick={() => onViewChange('tasks')}
+            className={`header__nav-btn ${currentView === 'tasks' ? 'active' : ''}`}
+          >
+            <span className="nav-icon">📝</span>
+            <span className="nav-text">任务</span>
+          </button>
+        </div>
+        
+        <div className="header__user">
+          <span className="header__username">{username}</span>
+          <button className="header__logout" onClick={onLogout}>
+            <span className="logout-icon">🚪</span>
+          </button>
+        </div>
       </div>
     </header>
   );

@@ -1,6 +1,6 @@
 // taskModel.js
 
-// 存储用户任务: { username: [{ id: string, title: string, completed: boolean, priority: string }] }
+// 存储用户任务: { username: [{ id: string, title: string, completed: boolean, priority: string, date: string, frequency: string, requiresSubmission: boolean, sharedWith: string, completionHistory: [] }] }
 const tasks = {};
 
 // 获取用户的所有任务
@@ -36,7 +36,9 @@ export function saveTask(username, task) {
     // 添加新任务
     const newTask = {
       ...task,
-      completed: task.completed ?? false // 确保新任务有completed属性
+      completed: task.completed ?? false,
+      completionHistory: task.completionHistory || [],
+      createdAt: new Date().toISOString()
     };
     tasks[username].push(newTask);
     return newTask;
@@ -72,6 +74,70 @@ export function findTaskByTitle(username, title) {
   return tasks[username]?.find(task => task.title === title) ?? null;
 }
 
+// 完成任务
+export function completeTask(username, taskId, completionData) {
+  if (!username || !taskId) {
+    throw new Error('Username and taskId are required');
+  }
+
+  const task = tasks[username]?.find(t => t.id === taskId);
+  if (!task) {
+    throw new Error('Task not found');
+  }
+
+  // 添加完成记录到历史
+  const completionRecord = {
+    id: Date.now().toString(),
+    completedBy: completionData.completedBy,
+    completedAt: completionData.completedAt,
+    screenshot: completionData.screenshot,
+    link: completionData.link,
+    log: completionData.log,
+    notes: completionData.notes
+  };
+
+  task.completionHistory = task.completionHistory || [];
+  task.completionHistory.push(completionRecord);
+  
+  // 更新任务状态
+  task.completed = true;
+  task.completedBy = completionData.completedBy;
+  task.completedAt = completionData.completedAt;
+
+  return task;
+}
+
+// 获取分享的任务
+export function getSharedTasks(username) {
+  if (!username) return [];
+  
+  const sharedTasks = [];
+  
+  // 查找分享给当前用户的任务
+  for (const [ownerUsername, userTasks] of Object.entries(tasks)) {
+    if (ownerUsername === username) continue;
+    
+    const sharedUserTasks = userTasks.filter(task => 
+      task.sharedWith === username && task.requiresSubmission
+    );
+    
+    sharedTasks.push(...sharedUserTasks.map(task => ({
+      ...task,
+      owner: ownerUsername
+    })));
+  }
+  
+  return sharedTasks;
+}
+
+// 获取任务完成历史
+export function getTaskCompletionHistory(username, taskId) {
+  if (!username || !taskId) return [];
+  
+  const task = tasks[username]?.find(t => t.id === taskId);
+  return task?.completionHistory || [];
+}
+
 // 清除用户的所有任务（用于测试）
 export function clearTasks(username) {
   if (!username) return false;
@@ -95,6 +161,7 @@ export function saveTasks(username, userTasks) {
   tasks[username] = userTasks.map(task => ({
     ...task,
     completed: task.completed ?? false,
+    completionHistory: task.completionHistory || [],
     id: task.id // 保持原有ID
   }));
   
@@ -102,18 +169,20 @@ export function saveTasks(username, userTasks) {
 }
 
 export function getUserStats(username) {
- const userTasks = getTasks(username);
- return {
-   inProgress: userTasks.filter(task => !task.completed).length,
-   completed: userTasks.filter(task => task.completed).length
- };
+  const userTasks = getTasks(username);
+  return {
+    inProgress: userTasks.filter(task => !task.completed).length,
+    completed: userTasks.filter(task => task.completed).length,
+    total: userTasks.length
+  };
 }
 
 export function getRankings() {
- return Object.entries(tasks).map(([username, userTasks]) => ({
-   username,
-   completedCount: userTasks.filter(task => task.completed).length
- })).sort((a, b) => b.completedCount - a.completedCount);
+  return Object.entries(tasks).map(([username, userTasks]) => ({
+    username,
+    completedCount: userTasks.filter(task => task.completed).length,
+    totalCount: userTasks.length
+  })).sort((a, b) => b.completedCount - a.completedCount);
 }
 
 
