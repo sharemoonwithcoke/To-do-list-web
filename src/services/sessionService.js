@@ -2,9 +2,9 @@
 import { createSession, getSession, deleteSession } from '../models/sessionModel.js';
 import crypto from 'crypto';
 
-export function startSession(username) {
+export function startSession(userId) {
   const sid = crypto.randomUUID();
-  createSession(sid, username);
+  createSession(sid, userId);
   return sid;
 }
 

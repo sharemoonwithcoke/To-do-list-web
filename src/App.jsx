@@ -5,6 +5,7 @@ import LoginForm from './components/Login/LoginForm';
 import Dashboard from './pages/Dashboard';
 import Stats from './pages/Stats';
 import Rankings from './pages/Rankings';
+import Calendar from './pages/Calendar';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,6 +37,8 @@ const handlePageChange = (page) => {
     switch (currentPage) {
       case 'dashboard':
         return <Dashboard username={username} />;
+      case 'calendar':
+        return <Calendar />;
       case 'stats':
         return <Stats />;
       case 'rankings':
@@ -65,4 +68,3 @@ const handlePageChange = (page) => {
 }
 
 export default App;
-

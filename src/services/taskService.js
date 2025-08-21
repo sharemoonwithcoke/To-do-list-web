@@ -3,21 +3,21 @@ import crypto from 'crypto';
 import { getTasks, saveTask, deleteTask } from '../models/taskModel.js';
 
 // 获取任务列表
-export function fetchTasks(username) {
-  if (!username) {
+export function fetchTasks(userId) {
+  if (!userId) {
     throw new Error('Username is required');
   }
   // 确保返回的是任务数组的副本
-  return getTasks(username);
+  return getTasks(userId);
 }
 
 // 添加新任务，确保不重复创建
-export function addTask(username, taskData) {
-  if (!username || !taskData) {
+export function addTask(userId, taskData) {
+  if (!userId || !taskData) {
     throw new Error('Username and task data are required');
   }
 
-  const tasks = getTasks(username);
+  const tasks = getTasks(userId);
   
   // 如果前端传入了ID，检查是否已存在该任务
   if (taskData.id && tasks.some(task => task.id === taskData.id)) {
@@ -28,19 +28,20 @@ export function addTask(username, taskData) {
   const newTask = {
     ...taskData,
     id: taskData.id || crypto.randomUUID(), // 如果没有ID才生成新ID
-    completed: false
+    completed: false,
+    createdAt: new Date().toISOString()
   };
 
-  return saveTask(username, newTask);
+  return saveTask(userId, newTask);
 }
 
 // 更新任务，确保不创建重复任务
-export function updateTask(username, taskId, updatedData) {
-  if (!username || !taskId) {
+export function updateTask(userId, taskId, updatedData) {
+  if (!userId || !taskId) {
     throw new Error('Username and taskId are required');
   }
 
-  const tasks = getTasks(username);
+  const tasks = getTasks(userId);
   const existingTask = tasks.find(task => task.id === taskId);
 
   if (!existingTask) {
@@ -54,16 +55,16 @@ export function updateTask(username, taskId, updatedData) {
     id: taskId // 保持原有ID不变
   };
 
-  return saveTask(username, updatedTask);
+  return saveTask(userId, updatedTask);
 }
 
 // 删除任务
-export function removeTask(username, taskId) {
-  if (!username || !taskId) {
+export function removeTask(userId, taskId) {
+  if (!userId || !taskId) {
     throw new Error('Username and taskId are required');
   }
   
-  return deleteTask(username, taskId);
+  return deleteTask(userId, taskId);
 }
 
 // 移除 validateTaskData - 应该只在 validators.js 中存在

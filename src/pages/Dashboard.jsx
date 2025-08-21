@@ -7,6 +7,9 @@ import './Dashboard.css';
 function Dashboard({ username }) {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('all');
+  const [targetToShare, setTargetToShare] = useState('');
+  const [shares, setShares] = useState([]);
+  const [sharedTasks, setSharedTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -32,6 +35,14 @@ function Dashboard({ username }) {
 
   useEffect(() => {
     fetchTasks();
+    fetch('/shares')
+      .then(res => res.ok ? res.json() : Promise.reject())
+      .then(data => setShares(data.sharedWithUserIds || []))
+      .catch(() => {});
+    fetch('/tasks/shared-with-me')
+      .then(res => res.ok ? res.json() : [])
+      .then(setSharedTasks)
+      .catch(()=>{});
   }, []);
 
   const handleAddTask = (newTask) => {
@@ -72,7 +83,28 @@ function Dashboard({ username }) {
     setFilter(newFilter);
   };
 
+  const handleShare = () => {
+    if (!targetToShare) return;
+    fetch('/shares', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ target: targetToShare })
+    })
+    .then(res => res.ok ? res.json() : res.json().then(e=>{ throw new Error(e.error || 'share failed'); }))
+    .then(() => {
+      setTargetToShare('');
+      return fetch('/shares');
+    })
+    .then(res => res.ok ? res.json() : Promise.reject())
+    .then(data => setShares(data.sharedWithUserIds || []))
+    .catch(err => alert(err.message));
+  };
+
   const filteredTasks = tasks.filter((task) => {
+    if (filter === 'all') return true;
+    return task.category === filter;
+  });
+  const filteredSharedTasks = sharedTasks.filter((task) => {
     if (filter === 'all') return true;
     return task.category === filter;
   });
@@ -87,17 +119,36 @@ function Dashboard({ username }) {
       {error && (
         <div className="dashboard__error">Error: {error}</div>
       )}
+      <div className="dashboard__share">
+        <input
+          placeholder="Share your to-do list with username or email"
+          value={targetToShare}
+          onChange={e => setTargetToShare(e.target.value)}
+        />
+        <button onClick={handleShare}>Share</button>
+      </div>
       <div className="dashboard__form-section">
       <TaskForm onAddTask={handleAddTask} />
       </div>
      
       <TaskFilter onFilterChange={handleFilterChange} />
-      <div className="dashboard__list-section">
-      <TaskList 
-        tasks={filteredTasks}
-        onTaskUpdate={handleTaskUpdate}
-        onTaskDelete={handleTaskDelete}
-      />
+      <div className="dashboard__list-section" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div>
+          <h3>My Tasks</h3>
+          <TaskList 
+            tasks={filteredTasks}
+            onTaskUpdate={handleTaskUpdate}
+            onTaskDelete={handleTaskDelete}
+          />
+        </div>
+        <div>
+          <h3>Shared With Me</h3>
+          <TaskList 
+            tasks={filteredSharedTasks}
+            onTaskUpdate={() => {}}
+            onTaskDelete={() => {}}
+          />
+        </div>
       </div>
     </div>
   );

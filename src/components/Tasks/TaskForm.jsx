@@ -6,6 +6,8 @@ function TaskForm({ onAddTask }) {
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('low');
   const [category, setCategory] = useState('other');
+  const [frequency, setFrequency] = useState('none'); // none|daily|weekly|monthly
+  const [weeklyDays, setWeeklyDays] = useState([]); // ['Mon','Tue',...]
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -14,12 +16,18 @@ function TaskForm({ onAddTask }) {
       description,
       priority,
       category,
-      completed: false 
+      completed: false,
+      schedule: {
+        frequency,
+        weeklyDays,
+      },
     });
     setTitle('');
     setDescription('');
     setPriority('low');
     setCategory('other');
+    setFrequency('none');
+    setWeeklyDays([]);
   };
 
   return (
@@ -79,6 +87,43 @@ function TaskForm({ onAddTask }) {
         </select>
       </label>
     </div>
+
+    <div className="form-group">
+      <label className="form-label">
+        Frequency:
+        <select 
+          className="form-select"
+          value={frequency} 
+          onChange={(e) => setFrequency(e.target.value)}
+        >
+          <option value="none">One-time</option>
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+        </select>
+      </label>
+    </div>
+
+    {frequency === 'weekly' && (
+      <div className="form-group">
+        <label className="form-label">Days of Week:</label>
+        <div className="form-checkbox-group">
+          {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => (
+            <label key={d} className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={weeklyDays.includes(d)}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setWeeklyDays(prev => checked ? [...prev, d] : prev.filter(x => x !== d));
+                }}
+              />
+              <span>{d}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+    )}
     
     <button type="submit" className="form-submit">Create Task</button>
   </form>

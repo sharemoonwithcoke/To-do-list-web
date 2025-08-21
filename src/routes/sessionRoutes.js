@@ -1,14 +1,12 @@
 // src/routes/sessionRoutes.js
 import express from 'express';
-import { login, logout } from '../controllers/sessionController.js';
-import { validateLogin } from '../middleware/validation.js';
+import { login, logout, register } from '../controllers/sessionController.js';
 
 const router = express.Router();
 
-router.post('/', (req, res) => {
-  if (!validateLogin(req, res)) return;
-  login(req, res);
-});
+router.post('/', login);
+
+router.post('/register', register);
 
 router.delete('/', logout);
 
