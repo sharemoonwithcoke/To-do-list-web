@@ -1,0 +1,219 @@
+/* Task Form 容器样式 */
+.task-form {
+    width: 100%;
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+  }
+  
+  /* 表单组样式 */
+  .form-group {
+    margin-bottom: 1.5rem;
+    width: 100%;
+  }
+  
+  /* 标签样式 */
+  .form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #4a5568;
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+  
+  /* 必填标记样式 */
+  .required {
+    color: #e53e3e;
+    margin-left: 4px;
+  }
+  
+  /* 输入框基础样式 */
+  .form-input,
+  .form-textarea,
+  .form-select {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    color: #2d3748;
+    transition: all 0.2s ease;
+  }
+  
+  /* 输入框焦点状态 */
+  .form-input:focus,
+  .form-textarea:focus,
+  .form-select:focus {
+    outline: none;
+    border-color: #4299e1;
+    background-color: #fff;
+  }
+  
+  /* 文本域特殊样式 */
+  .form-textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+  
+  /* 下拉框特殊样式 */
+  .form-select {
+    background-color: #fff;
+    cursor: pointer;
+  }
+  
+  /* 提交按钮样式 */
+  .form-submit {
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    background-color: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .form-submit:hover {
+    background-color: #3182ce;
+  }
+  
+  /* 占位符文本样式 */
+  .form-textarea::placeholder {
+    color: #a0aec0;
+  }
+  
+  /* 响应式调整 */
+  @media (max-width: 640px) {
+    .task-form {
+      padding: 1.5rem;
+      margin: 1rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1rem;
+    }
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-label {
+    display: block;
+    color: #4a5568;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  
+  .required {
+    color: #e53e3e;
+    margin-left: 4px;
+  }
+  
+  /* 共享的输入框样式 */
+  .form-input,
+  .form-textarea,
+  .form-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #2d3748;
+    transition: all 0.2s ease;
+    background-color: #fff;
+  }
+  
+  .form-input:hover,
+  .form-textarea:hover,
+  .form-select:hover {
+    border-color: #cbd5e0;
+  }
+  
+  .form-input:focus,
+  .form-textarea:focus,
+  .form-select:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+  }
+  
+  /* 文本框特定样式 */
+  .form-textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+  
+  /* 下拉框特定样式 */
+  .form-select {
+    cursor: pointer;
+    padding-right: 2rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234a5568'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1em;
+  }
+  
+  .form-select option {
+    padding: 0.5rem;
+  }
+  
+  /* 提交按钮样式 */
+  .form-submit {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    background-color: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 1rem;
+  }
+  
+  .form-submit:hover {
+    background-color: #3182ce;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(66, 153, 225, 0.2);
+  }
+  
+  .form-submit:active {
+    transform: translateY(0);
+  }
+  
+  .form-submit:disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  /* 错误状态样式 */
+  .form-input.error,
+  .form-textarea.error,
+  .form-select.error {
+    border-color: #e53e3e;
+  }
+  
+  .form-input.error:focus,
+  .form-textarea.error:focus,
+  .form-select.error:focus {
+    box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.15);
+  }
+  
+  .error-message {
+    color: #e53e3e;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+  }

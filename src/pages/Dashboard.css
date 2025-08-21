@@ -1,0 +1,28 @@
+/* Dashboard.css */
+.dashboard {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+  
+  .dashboard__title {
+    font-size: 1.8rem;
+    color: #2d3748;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .dashboard__error {
+    background-color: #fff5f5;
+    color: #c53030;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+  
+  .dashboard__loading {
+    text-align: center;
+    padding: 2rem;
+    color: #4a5568;
+    font-size: 1.2rem;
+  }

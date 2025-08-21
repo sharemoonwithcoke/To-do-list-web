@@ -1,0 +1,81 @@
+/* 重置排名计数 */
+.ranking-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #edf2f7;
+    position: relative;
+  }
+  
+  .ranking-item:last-child {
+    border-bottom: none;
+  }
+  
+  /* 修改数字圆圈样式 */
+  .ranking-item__rank {
+    width: 36px;
+    height: 36px;
+    background: #e2e8f0; /* 默认背景色 */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1rem;
+    color: #4a5568;
+    margin-right: 1rem;
+    flex-shrink: 0;
+  }
+  
+  /* 为每个排名数字设置不同的背景颜色 */
+  .ranking-item:nth-child(1) .ranking-item__rank {
+    background: linear-gradient(45deg, #FFD700, #FDB777); /* 金色 */
+    color: white;
+  }
+  
+  .ranking-item:nth-child(2) .ranking-item__rank {
+    background: linear-gradient(45deg, #C0C0C0, #E0E0E0); /* 银色 */
+    color: white;
+  }
+  
+  .ranking-item:nth-child(3) .ranking-item__rank {
+    background: linear-gradient(45deg, #CD7F32, #DFA77B); /* 铜色 */
+    color: white;
+  }
+  
+  .ranking-item__username {
+    flex: 1;
+    font-size: 1rem;
+    color: #2d3748;
+    margin: 0;
+    font-weight: 500;
+  }
+  
+  .ranking-item__score {
+    color: #718096;
+    margin: 0;
+    font-size: 0.95rem;
+    padding-left: 1rem;
+  }
+  
+  /* 响应式样式调整 */
+  @media (max-width: 640px) {
+    .ranking-item {
+      padding: 0.75rem 1rem;
+    }
+  
+    .ranking-item__rank {
+      width: 30px;
+      height: 30px;
+      font-size: 0.9rem;
+    }
+  
+    .ranking-item__username {
+      font-size: 0.95rem;
+    }
+  
+    .ranking-item__score {
+      font-size: 0.85rem;
+    }
+  }
+  

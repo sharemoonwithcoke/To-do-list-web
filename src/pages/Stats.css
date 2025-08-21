@@ -1,0 +1,31 @@
+/* Stats.css */
+/* Center the stats-page container */
+.stats-page {
+    display: flex;
+    flex-direction: column; /* Arrange title and cards vertically */
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    min-height: 100vh; /* Ensure it takes the full height of the viewport */
+    text-align: center; /* Center-align text */
+    padding: 20px;
+    background-color: #f8f9fa; /* Optional: add a light background for better visibility */
+  }
+  
+  /* Style the cards container */
+  .stats-page__cards {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    gap: 20px; /* Add space between cards */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  }
+  
+  /* Individual card styles for consistent layout */
+  .stats-card {
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 200px; /* Fixed width for consistent card size */
+  }
+  

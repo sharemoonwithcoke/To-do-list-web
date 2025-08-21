@@ -1,0 +1,64 @@
+/* TaskFilter.css */
+.task-filter {
+    display: flex;
+    align-items: center;
+    margin: 2rem 0;
+    padding: 1rem 1.5rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    max-width: 500px;
+  }
+  
+  .task-filter__label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.95rem;
+    color: #4a5568;
+    font-weight: 500;
+    width: 100%;
+  }
+  
+  .task-filter__select {
+    flex: 1;
+    padding: 0.5rem 2rem 0.5rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background-color: white;
+    color: #2d3748;
+    font-size: 0.95rem;
+    cursor: pointer;
+    appearance: none;
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1em;
+    transition: all 0.2s ease;
+  }
+  
+  .task-filter__select:hover {
+    border-color: #cbd5e0;
+  }
+  
+  .task-filter__select:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+  }
+  
+  @media (max-width: 640px) {
+    .task-filter {
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+  
+    .task-filter__label {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  
+    .task-filter__select {
+      width: 100%;
+    }
+  }

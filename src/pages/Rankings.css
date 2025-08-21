@@ -1,0 +1,13 @@
+.rankings-page {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  
+  .rankings-page__title {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #2d3748;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
