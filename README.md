@@ -1,8 +1,187 @@
-# React + Vite
+# To-Do List 应用
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+一个功能完整的任务管理应用，支持用户注册、登录、任务创建、日历视图、任务分享和提交证明等功能。
 
-Currently, two official plugins are available:
+## 功能特性
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 🔐 用户认证
+- 用户注册（用户名、邮箱、密码）
+- 用户登录
+- JWT token认证
+- 安全的密码加密存储
+
+### 📅 日历视图
+- 月历显示
+- 每日任务指示器
+- 点击日期查看当日任务
+- 支持任务频率（一次性、每天、每周、每月）
+
+### 📝 任务管理
+- 创建任务（标题、描述、频率）
+- 编辑和删除任务
+- 任务完成状态管理
+- 任务过滤器（全部、待完成、已完成、需提交）
+
+### 📤 任务提交
+- 支持多种提交类型：
+  - 文字描述
+  - 链接
+  - 文件上传
+- 提交历史记录
+- 任务完成证明
+
+### 🤝 任务分享
+- 将任务分享给其他用户
+- 共享任务独立管理
+- 分享历史记录
+
+### 📊 统计和排行榜
+- 个人任务统计
+- 用户排行榜
+- 完成率统计
+
+## 技术栈
+
+### 前端
+- React 18
+- Vite
+- CSS3 (响应式设计)
+- 现代JavaScript (ES6+)
+
+### 后端
+- Node.js
+- Express.js
+- JWT认证
+- bcrypt密码加密
+
+## 安装和运行
+
+### 1. 安装依赖
+```bash
+npm install
+```
+
+### 2. 构建前端
+```bash
+npm run build
+```
+
+### 3. 启动服务器
+```bash
+npm start
+```
+
+### 4. 访问应用
+打开浏览器访问 `http://localhost:3000`
+
+## 使用说明
+
+### 注册和登录
+1. 首次访问应用会看到登录页面
+2. 点击"立即注册"创建新账户
+3. 填写用户名、邮箱和密码
+4. 注册成功后自动登录
+
+### 创建任务
+1. 在日历视图中点击任意日期
+2. 点击"+"按钮添加任务
+3. 填写任务信息：
+   - 任务标题（必填）
+   - 任务描述（可选）
+   - 任务频率（一次性/每天/每周/每月）
+   - 是否需要提交证明
+
+### 管理任务
+1. 在任务管理视图中查看所有任务
+2. 使用过滤器筛选任务
+3. 点击任务卡片查看详情
+4. 编辑或删除任务
+
+### 提交任务证明
+1. 对于需要提交证明的任务，点击"提交证明"
+2. 选择提交类型：
+   - 文字描述：描述完成情况
+   - 链接：提供相关链接
+   - 文件上传：上传截图或文档
+3. 提交后可在任务详情中查看提交历史
+
+### 分享任务
+1. 在任务管理页面点击"分享"按钮
+2. 选择要分享的任务
+3. 输入目标用户名
+4. 确认分享
+
+### 日历视图
+1. 切换至日历视图
+2. 查看每月任务分布
+3. 点击日期查看当日任务
+4. 使用导航按钮切换月份
+
+## API 端点
+
+### 用户认证
+- `POST /sessions/login` - 用户登录
+- `POST /sessions/register` - 用户注册
+- `DELETE /sessions/logout` - 用户登出
+
+### 任务管理
+- `GET /tasks` - 获取用户任务
+- `POST /tasks` - 创建新任务
+- `PUT /tasks/:taskId` - 更新任务
+- `DELETE /tasks/:taskId` - 删除任务
+- `POST /tasks/:taskId/submit` - 提交任务证明
+- `POST /tasks/:taskId/share` - 分享任务
+
+### 统计信息
+- `GET /tasks/stats` - 获取用户统计
+- `GET /tasks/rankings` - 获取排行榜
+
+## 项目结构
+
+```
+├── src/
+│   ├── components/          # React组件
+│   │   ├── Calendar/        # 日历相关组件
+│   │   ├── Header/          # 页面头部
+│   │   ├── Login/           # 登录注册组件
+│   │   └── Tasks/           # 任务相关组件
+│   ├── controllers/         # 后端控制器
+│   ├── middleware/          # 中间件
+│   ├── models/              # 数据模型
+│   ├── pages/               # 页面组件
+│   ├── routes/              # API路由
+│   └── utils/               # 工具函数
+├── dist/                    # 构建输出
+├── server.js               # 服务器入口
+└── package.json            # 项目配置
+```
+
+## 开发模式
+
+### 前端开发
+```bash
+npm run dev
+```
+
+### 代码检查
+```bash
+npm run lint
+```
+
+## 环境变量
+
+可以设置以下环境变量：
+
+- `PORT` - 服务器端口（默认：3000）
+- `JWT_SECRET` - JWT密钥（默认：your-secret-key）
+
+## 注意事项
+
+1. 这是一个演示应用，数据存储在内存中，重启服务器后数据会丢失
+2. 在生产环境中应该使用数据库存储数据
+3. 文件上传功能需要配置适当的存储服务
+4. 建议在生产环境中使用HTTPS
+
+## 许可证
+
+MIT License

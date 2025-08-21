@@ -7,50 +7,41 @@ import Stats from './pages/Stats';
 import Rankings from './pages/Rankings';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
+  const [user, setUser] = useState(null);
   const [currentPage, setCurrentPage] = useState('dashboard');
 
-  const handleLogin = (user) => {
-    setUsername(user);
-    setIsLoggedIn(true);
+  const handleLogin = (userData) => {
+    setUser(userData);
   };
 
   const handleLogout = () => {
-    setUsername('');
-    setIsLoggedIn(false);
+    setUser(null);
     setCurrentPage('dashboard'); 
   };
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
-
-  
-const handlePageChange = (page) => {
-  setCurrentPage(page);
- 
- 
-};
-
- 
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard':
-        return <Dashboard username={username} />;
+        return <Dashboard user={user} />;
       case 'stats':
-        return <Stats />;
+        return <Stats user={user} />;
       case 'rankings':
-        return <Rankings />;
+        return <Rankings user={user} />;
       default:
-        return <Dashboard username={username} />;
+        return <Dashboard user={user} />;
     }
   };
 
   return (
     <div className="app">
-      {isLoggedIn ? (
+      {user ? (
         <>
           <Header 
-            username={username} 
+            user={user} 
             onLogout={handleLogout}
             currentPage={currentPage}
             onPageChange={handlePageChange} 

@@ -1,103 +1,192 @@
 import React, { useState, useEffect } from 'react';
-import TaskList from '../components/Tasks/TaskList';
-import TaskForm from '../components/Tasks/TaskForm';
-import TaskFilter from '../components/Tasks/TaskFilter';
+import CalendarView from '../components/Calendar/CalendarView';
+import TaskManager from '../components/Tasks/TaskManager';
 import './Dashboard.css';
 
-function Dashboard({ username }) {
+function Dashboard({ user }) {
+  const [activeView, setActiveView] = useState('calendar'); // 'calendar' or 'tasks'
   const [tasks, setTasks] = useState([]);
-  const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchTasks = () => {
-    setLoading(true);
-    fetch('/tasks')
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch tasks');
-        return res.json();
-      })
-      .then(data => {
-        setTasks(data);
-        setError(null);
-      })
-      .catch(err => {
-        setError(err.message);
-        alert(err.message);
-      })
-      .finally(() => {
-        setLoading(false);
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/tasks', {
+        headers: {
+          'Authorization': `Bearer ${user.token}`
+        }
       });
+      
+      if (!response.ok) {
+        throw new Error('获取任务失败');
+      }
+      
+      const data = await response.json();
+      setTasks(data);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      console.error('获取任务失败:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+  }, [user]);
 
-  const handleAddTask = (newTask) => {
-    fetch('/tasks', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newTask)
-    })
-    .then(res => {
-      if (!res.ok) throw new Error('Failed to add task');
-      return res.json();
-    })
-    .then(task => {
+  const handleAddTask = async (newTask) => {
+    try {
+      const response = await fetch('/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+        },
+        body: JSON.stringify(newTask)
+      });
+
+      if (!response.ok) {
+        throw new Error('添加任务失败');
+      }
+
+      const task = await response.json();
       setTasks(prev => [...prev, task]);
       setError(null);
-    })
-    .catch(err => {
+    } catch (err) {
       setError(err.message);
-      alert(err.message);
-    });
+      console.error('添加任务失败:', err);
+    }
   };
 
-  const handleTaskUpdate = (updatedTask) => {
-    setTasks(prev => 
-      prev.map(task => 
-        task.id === updatedTask.id ? updatedTask : task
-      )
-    );
+  const handleTaskUpdate = async (updatedTask) => {
+    try {
+      const response = await fetch(`/tasks/${updatedTask.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+        },
+        body: JSON.stringify(updatedTask)
+      });
+
+      if (!response.ok) {
+        throw new Error('更新任务失败');
+      }
+
+      const task = await response.json();
+      setTasks(prev => 
+        prev.map(t => t.id === task.id ? task : t)
+      );
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      console.error('更新任务失败:', err);
+    }
   };
 
-  const handleTaskDelete = (taskId) => {
-    setTasks(prev => prev.filter(task => task.id !== taskId));
+  const handleTaskDelete = async (taskId) => {
+    try {
+      const response = await fetch(`/tasks/${taskId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${user.token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('删除任务失败');
+      }
+
+      setTasks(prev => prev.filter(task => task.id !== taskId));
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      console.error('删除任务失败:', err);
+    }
   };
 
-  const handleFilterChange = (newFilter) => {
-    setFilter(newFilter);
-  };
+  const handleTaskSubmit = async (taskId, submission) => {
+    try {
+      const response = await fetch(`/tasks/${taskId}/submit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+        },
+        body: JSON.stringify(submission)
+      });
 
-  const filteredTasks = tasks.filter((task) => {
-    if (filter === 'all') return true;
-    return task.category === filter;
-  });
+      if (!response.ok) {
+        throw new Error('提交任务失败');
+      }
+
+      const updatedTask = await response.json();
+      setTasks(prev => 
+        prev.map(t => t.id === updatedTask.id ? updatedTask : t)
+      );
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      console.error('提交任务失败:', err);
+    }
+  };
 
   if (loading) {
-    return <div className="dashboard__loading">Loading tasks...</div>;
+    return (
+      <div className="dashboard-loading">
+        <div className="loading-spinner"></div>
+        <p>加载中...</p>
+      </div>
+    );
   }
 
   return (
     <div className="dashboard">
-      <h2 className="dashboard__title">Welcome, {username}</h2>
-      {error && (
-        <div className="dashboard__error">Error: {error}</div>
-      )}
-      <div className="dashboard__form-section">
-      <TaskForm onAddTask={handleAddTask} />
+      <div className="dashboard-header">
+        <h1>欢迎, {user.username}</h1>
+        <div className="view-toggle">
+          <button 
+            className={`toggle-btn ${activeView === 'calendar' ? 'active' : ''}`}
+            onClick={() => setActiveView('calendar')}
+          >
+            📅 日历视图
+          </button>
+          <button 
+            className={`toggle-btn ${activeView === 'tasks' ? 'active' : ''}`}
+            onClick={() => setActiveView('tasks')}
+          >
+            📝 任务管理
+          </button>
+        </div>
       </div>
-     
-      <TaskFilter onFilterChange={handleFilterChange} />
-      <div className="dashboard__list-section">
-      <TaskList 
-        tasks={filteredTasks}
-        onTaskUpdate={handleTaskUpdate}
-        onTaskDelete={handleTaskDelete}
-      />
+
+      {error && (
+        <div className="error-message">
+          {error}
+          <button onClick={() => setError(null)}>✕</button>
+        </div>
+      )}
+
+      <div className="dashboard-content">
+        {activeView === 'calendar' ? (
+          <CalendarView 
+            tasks={tasks}
+            onTaskUpdate={handleTaskUpdate}
+            onTaskSubmit={handleTaskSubmit}
+            onAddTask={handleAddTask}
+          />
+        ) : (
+          <TaskManager 
+            tasks={tasks}
+            onAddTask={handleAddTask}
+            onTaskUpdate={handleTaskUpdate}
+            onTaskDelete={handleTaskDelete}
+            onTaskSubmit={handleTaskSubmit}
+          />
+        )}
       </div>
     </div>
   );
