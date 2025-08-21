@@ -2,7 +2,7 @@
 import React from 'react';
 import './Header.css';
 
-function Header({ username, onLogout, currentPage, onPageChange }) {
+function Header({ user, onLogout, currentPage, onPageChange }) {
   return (
     <header className="header">
       <h1 className="header__title">Task Manager</h1>
@@ -27,8 +27,8 @@ function Header({ username, onLogout, currentPage, onPageChange }) {
         </button>
       </nav>
       <div className="header__user">
-        <p className="header__username">User: {username}</p>
-        <button className="header__logout" onClick={onLogout}>Logout</button>
+        <p className="header__username">用户: {user?.username}</p>
+        <button className="header__logout" onClick={onLogout}>退出</button>
       </div>
     </header>
   );

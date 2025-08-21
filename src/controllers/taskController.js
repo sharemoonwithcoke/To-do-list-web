@@ -1,49 +1,106 @@
 // src/controllers/taskController.js
-import { addTask, updateTask, removeTask } from '../services/taskService.js';
-import { handleError } from '../utils/handleError.js';
-import { getUserStats as getStats, getRankings as getRankingsList } from '../models/taskModel.js';
+import { 
+  saveTask, 
+  deleteTask, 
+  taskExists,
+  submitTaskProof,
+  shareTask,
+  getUserStats,
+  getRankings
+} from '../models/taskModel.js';
 
 export function createTask(req, res) {
-  const task = addTask(req.username, req.body);
-  if (!task) {
-    handleError(res, 'invalidTask');
-    return;
+  try {
+    const task = saveTask(req.username, req.body);
+    res.status(201).json(task);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
-  res.status(201).json(task);
 }
 
 export function updateTaskHandler(req, res) {
-  const updatedTask = updateTask(req.username, req.params.taskId, req.body);
-  if (!updatedTask) {
-    handleError(res, 'taskNotFound');
-    return;
+  try {
+    const { taskId } = req.params;
+    if (!taskExists(req.username, taskId)) {
+      return res.status(404).json({ error: '任务不存在' });
+    }
+    
+    const updatedTask = saveTask(req.username, { ...req.body, id: taskId });
+    res.json(updatedTask);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
-  res.json(updatedTask);
 }
 
 export function deleteTaskHandler(req, res) {
-  const success = removeTask(req.username, req.params.taskId);
-  if (!success) {
-    handleError(res, 'taskNotFound');
-    return;
+  try {
+    const { taskId } = req.params;
+    const success = deleteTask(req.username, taskId);
+    
+    if (!success) {
+      return res.status(404).json({ error: '任务不存在' });
+    }
+    
+    res.status(204).send();
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
-  res.status(204).send();
+}
+
+export function submitTaskProofHandler(req, res) {
+  try {
+    const { taskId } = req.params;
+    const { type, content, file } = req.body;
+    
+    if (!taskExists(req.username, taskId)) {
+      return res.status(404).json({ error: '任务不存在' });
+    }
+    
+    const submission = { type, content, file };
+    const updatedTask = submitTaskProof(req.username, taskId, submission);
+    res.json(updatedTask);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
+export function shareTaskHandler(req, res) {
+  try {
+    const { taskId } = req.params;
+    const { toUsername } = req.body;
+    
+    if (!taskExists(req.username, taskId)) {
+      return res.status(404).json({ error: '任务不存在' });
+    }
+    
+    if (!toUsername) {
+      return res.status(400).json({ error: '请指定分享给的用户' });
+    }
+    
+    const sharedTask = shareTask(req.username, toUsername, taskId);
+    res.json({ 
+      message: '任务分享成功',
+      sharedTask 
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 }
 
 export function getStatsHandler(req, res) {
-  const stats = getStats(req.username);
-  if (!stats) {
-    handleError(res, 'serverError');
-    return;
+  try {
+    const stats = getUserStats(req.username);
+    res.json(stats);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-  res.json(stats);
 }
 
 export function getRankingsHandler(req, res) {
-  const rankings = getRankingsList();
-  if (!rankings) {
-    handleError(res, 'serverError');
-    return;
+  try {
+    const rankings = getRankings();
+    res.json(rankings);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-  res.json(rankings);
 }
