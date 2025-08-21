@@ -24,6 +24,10 @@ export function handleError(res, type) {
     serverError: {
       status: 500,
       message: 'Server error'
+    },
+    userNotFound: {
+      status: 404,
+      message: 'User not found'
     }
   };
 

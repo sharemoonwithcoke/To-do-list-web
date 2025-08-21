@@ -1,7 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './TaskItem.css';
 
 function TaskItem({ task, onTaskUpdate, onTaskDelete }) {
+  const [showSubmissions, setShowSubmissions] = useState(false);
+  const [submissions, setSubmissions] = useState([]);
+  const [submissionType, setSubmissionType] = useState('link');
+  const [submissionDetails, setSubmissionDetails] = useState('');
+  const [file, setFile] = useState(null);
+
+  useEffect(() => {
+    if (showSubmissions) {
+      const ownerKey = task.ownerUserId ? task.ownerUserId : 'me';
+      fetch(`/submissions/${ownerKey}/${task.id}`)
+        .then(res => res.ok ? res.json() : [])
+        .then(setSubmissions)
+        .catch(() => {});
+    }
+  }, [showSubmissions, task.id, task.ownerUserId]);
   const handleStatusChange = () => {
     if (task.completed) return;
     
@@ -38,6 +53,26 @@ function TaskItem({ task, onTaskUpdate, onTaskDelete }) {
     }
   };
 
+  const handleSubmitSubmission = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('type', submissionType);
+    formData.append('details', submissionDetails);
+    if (file) formData.append('file', file);
+    const ownerKey = task.ownerUserId ? task.ownerUserId : 'me';
+    fetch(`/submissions/${ownerKey}/${task.id}`, {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => res.ok ? res.json() : res.json().then(e=>{ throw new Error(e.error || 'submit failed'); }))
+    .then(sub => {
+      setSubmissionDetails('');
+      setFile(null);
+      setSubmissions(prev => [sub, ...prev]);
+    })
+    .catch(err => alert(err.message));
+  };
+
   return (
     <li className={`task-item ${task.completed ? 'completed' : ''}`}>
       <div className="task-item__content">
@@ -66,6 +101,9 @@ function TaskItem({ task, onTaskUpdate, onTaskDelete }) {
           <span className="task-item__status-badge">
             {task.completed ? '✓ Completed' : '⌛ In Progress'}
           </span>
+          {task.schedule?.frequency && task.schedule.frequency !== 'none' && (
+            <span className="task-item__schedule">{task.schedule.frequency === 'weekly' ? `Weekly(${(task.schedule.weeklyDays||[]).join(',')})` : task.schedule.frequency}</span>
+          )}
         </div>
       </div>
       {!task.completed && (
@@ -76,6 +114,33 @@ function TaskItem({ task, onTaskUpdate, onTaskDelete }) {
         >
           ×
         </button>
+      )}
+
+      <div style={{ marginTop: '8px' }}>
+        <button onClick={() => setShowSubmissions(v => !v)}>
+          {showSubmissions ? 'Hide Submissions' : 'Show Submissions'}
+        </button>
+      </div>
+      {showSubmissions && (
+        <div className="task-submissions">
+          <form onSubmit={handleSubmitSubmission} style={{ display: 'grid', gap: 8, marginTop: 8 }}>
+            <select value={submissionType} onChange={e => setSubmissionType(e.target.value)}>
+              <option value="link">Link</option>
+              <option value="log">Log</option>
+              <option value="screenshot">Screenshot</option>
+            </select>
+            <input placeholder="details or URL" value={submissionDetails} onChange={e => setSubmissionDetails(e.target.value)} />
+            <input type="file" onChange={e => setFile(e.target.files?.[0] || null)} />
+            <button type="submit">Submit</button>
+          </form>
+          <ul style={{ marginTop: 8 }}>
+            {submissions.map(s => (
+              <li key={s.id}>
+                <strong>{s.type}</strong> · {new Date(s.dateISO).toLocaleString()} · details: {s.details} {s.filePath ? (<a href={s.filePath} target="_blank" rel="noreferrer">file</a>) : null}
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </li>
   );

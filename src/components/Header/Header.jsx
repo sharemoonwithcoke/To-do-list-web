@@ -14,6 +14,12 @@ function Header({ username, onLogout, currentPage, onPageChange }) {
           To-Do List
         </button>
         <button 
+          onClick={() => onPageChange('calendar')}
+          className={`header__link ${currentPage === 'calendar' ? 'active' : ''}`}
+        >
+          Calendar
+        </button>
+        <button 
           onClick={() => onPageChange('stats')}
           className={`header__link ${currentPage === 'stats' ? 'active' : ''}`}
         >

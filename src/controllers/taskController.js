@@ -4,7 +4,11 @@ import { handleError } from '../utils/handleError.js';
 import { getUserStats as getStats, getRankings as getRankingsList } from '../models/taskModel.js';
 
 export function createTask(req, res) {
-  const task = addTask(req.username, req.body);
+  const payload = {
+    ...req.body,
+    ownerUserId: req.userId,
+  };
+  const task = addTask(req.userId, payload);
   if (!task) {
     handleError(res, 'invalidTask');
     return;
@@ -13,7 +17,7 @@ export function createTask(req, res) {
 }
 
 export function updateTaskHandler(req, res) {
-  const updatedTask = updateTask(req.username, req.params.taskId, req.body);
+  const updatedTask = updateTask(req.userId, req.params.taskId, req.body);
   if (!updatedTask) {
     handleError(res, 'taskNotFound');
     return;
@@ -22,7 +26,7 @@ export function updateTaskHandler(req, res) {
 }
 
 export function deleteTaskHandler(req, res) {
-  const success = removeTask(req.username, req.params.taskId);
+  const success = removeTask(req.userId, req.params.taskId);
   if (!success) {
     handleError(res, 'taskNotFound');
     return;
@@ -31,7 +35,7 @@ export function deleteTaskHandler(req, res) {
 }
 
 export function getStatsHandler(req, res) {
-  const stats = getStats(req.username);
+  const stats = getStats(req.userId);
   if (!stats) {
     handleError(res, 'serverError');
     return;

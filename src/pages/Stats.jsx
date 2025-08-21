@@ -30,6 +30,7 @@ function Stats() {
   return (
     <div className="stats-page">
       <h2 className="stats-page__title">Personal Statistics</h2>
+      <p style={{ marginTop: 8 }}>Share your to-do list with friends to compare and collaborate.</p>
       <div className="stats-page__cards">
         <StatsCard title="Tasks In Progress" value={stats.inProgress} />
         <StatsCard title="Tasks Completed" value={stats.completed} />

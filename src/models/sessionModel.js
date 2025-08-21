@@ -1,8 +1,8 @@
 // src/models/sessionModel.js
 const sessions = {};
 
-export function createSession(sid, username) {
-  sessions[sid] = username;
+export function createSession(sid, userId) {
+  sessions[sid] = userId;
   return true;
 }
 
